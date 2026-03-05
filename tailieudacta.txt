@@ -1,0 +1,115 @@
+📄 TÀI LIỆU ĐẶC TẢ DỰ ÁN: WEB QUÀ TẶNG 8/3 (ULTIMATE EDITION)
+1. MỤC TIÊU VÀ BỐI CẢNH DỰ ÁN
+Mục tiêu: Tạo một trang web tương tác, lãng mạn, hài hước và cá nhân hóa cao độ để tặng người yêu nhân dịp Quốc tế Phụ nữ 8/3.
+
+Phong cách: Kết hợp sự lầy lội (meme, trêu chọc) và sự lãng mạn (ôn lại kỷ niệm, hiệu ứng lung linh).
+
+Yêu cầu kỹ thuật: UI/UX đạt chuẩn ứng dụng cao cấp (60FPS Animations, Hardware Acceleration, Liquid Glassmorphism). Host trực tiếp trên GitHub Pages.
+
+2. QUẢN LÝ TÀI NGUYÊN (ASSETS)
+Toàn bộ tài nguyên được đặt chung trong thư mục gốc, bao gồm:
+
+Core: index.html
+
+Video & Audio Nền: background.mp4, bg-music.mp3
+
+Âm thanh Meme (Trả lời sai): meme-sound-1.mp3 đến meme-sound-4.mp3
+
+Âm thanh Right (Trả lời đúng): right-ans-meme1.mp3 đến right-ans-meme4.mp3
+
+GIF Meme Chúc mừng: wow1.gif đến wow7.gif
+
+12 Stickers động (Nổi lơ lửng):
+
+Mascot: cin1.png, cin2.png, capy1.png, capy2.png, loop1.png, loop2.png, cat1.png.
+
+Avatar người yêu: ny1.png đến ny5.png (Bo viền tròn, hào quang tỏa sáng).
+
+3. THIẾT KẾ GIAO DIỆN (UI/UX - PREMIUM GLASSMORPHISM)
+Font chữ: Quicksand (Bo tròn, hiện đại, dễ thương).
+
+Nền tảng (Background): Video lặp vô tận, phủ một lớp mờ (radial-gradient) để tập trung sự chú ý vào giữa.
+
+Thẻ nội dung (Cards): Kính mờ trong suốt (Liquid Glass), viền gradient mỏng, bóng đổ sâu, có hiệu ứng "Nhịp thở pha lê" (Breathing Animation nhấp nháy vùng sáng).
+
+Nút bấm (Buttons): Gradient xanh biển, có hiệu ứng sóng âm lướt sáng (shimmerBtn). Phản hồi nảy (scale: 1.02) khi hover.
+
+Stickers Vật lý: Áp dụng will-change: transform đẩy lên GPU xử lý đồ họa giúp ảnh lơ lửng mượt mà 60fps, không làm nặng trình duyệt.
+
+4. LUỒNG TRẢI NGHIỆM (USER FLOW)
+Hệ thống gồm 4 màn hình (Cards) quản lý bằng cơ chế add/remove class active:
+
+▶ Màn 1: Welcome (Nhập tên)
+
+Yêu cầu nhập tên, input trống thì khóa nút "Tiếp tục".
+
+Bấm tiếp tục -> Bật nhạc nền bg-music.mp3 -> Bắn Toast trêu chọc: "Nhập cho có thôi, tồ vcl =)))" -> Trễ 1.2s rồi tự chuyển sang Menu.
+
+▶ Màn 2: Main Menu (Hành trình)
+
+Liệt kê 4 Chặng đường. Cơ chế Lock/Unlock:
+
+Chặng 2, 3, 4 mặc định bị khóa (class .locked), chữ bị làm mờ tịt (filter: blur), có icon ổ khóa 🔒.
+
+Bấm vào chặng khóa sẽ nảy Toast cảnh báo (Ví dụ: "Phải xem xong phần 2 mới mở được nha!").
+
+▶ Màn 3: Trắc nghiệm (Part 1 - Quiz)
+
+Chứa 10 câu hỏi lấy từ mảng quizData.
+
+Đáp án hiển thị dạng thanh ngang, hover có hiệu ứng vạch sáng lướt từ trái sang (::before).
+
+▶ Màn 4: Góc nhìn (Part 2 - Đang chờ code tiếp)
+
+Nơi nhìn lại hành trình qua ảnh và góc nhìn của nam chính.
+
+5. CƠ CHẾ LOGIC CỐT LÕI (CORE MECHANICS)
+A. Logic Mở Khóa Khung Bậc (Unlock Burst Animation)
+Cơ chế: Khi hoàn thành Part 1, biến isPart2Unlocked = true. Trở về Menu và gọi hàm unlockPart('btn-part2').
+
+Hiệu ứng CSS: Nút bấm phóng to -> Rực sáng hào quang Neon -> Icon ổ khóa xoay 180 độ và biến mất -> Lớp kính mờ tan đi làm rõ chữ. (Sử dụng keyframes unlockBurst).
+
+B. Logic Kiểm Tra Đáp Án
+Trường hợp CHỌN ĐÚNG:
+
+Phát ngẫu nhiên nhạc Right (rightSounds).
+
+Kích hoạt Popup chứa GIF Meme bằng hàm playMemeGifAndNext().
+
+Popup GIF: Hiện lên ở giữa màn, viền dạ quang trắng/xanh cực đẹp. Cố định chạy 2.5s rồi tự động thu lại. Trễ 0.45s rồi nạp câu tiếp theo.
+
+KHÔNG hiện Toast giải thích ở bước này để tránh rối mắt.
+
+Trường hợp CHỌN SAI:
+
+Phát ngẫu nhiên nhạc Sai (wrongSounds).
+
+Gọi hàm showToast(q.messages[selectedIndex]) để thả những câu chê bai lầy lội ("cút", "ỉa ra quần rrrr"...).
+
+C. Logic Siêu Toast Notification (GPU Accelerated)
+Thiết kế: Dạng viên thuốc lớn, nền gradient tối màu, viền dạ quang Neon.
+
+Animation: Nảy từ dưới đáy màn hình lên theo quy luật vật lý cubic-bezier(0.34, 1.56, 0.64, 1).
+
+JS Reflow Trick: Trong code dùng lệnh void toast.offsetWidth; để ép trình duyệt reset lại animation ngay lập tức nếu người dùng bấm sai liên tục, loại bỏ hoàn toàn hiện tượng khựng/giật/lag.
+
+6. ROADMAP: NHIỆM VỤ TIẾP THEO (GỬI CHO AI TRONG LẦN TỚI)
+Nhiệm vụ 1: Dựng kịch bản Phần 2 (Cùng nhìn lại hành trình)
+
+Thay thế khung nội dung tĩnh hiện tại của screen-part2 thành một Slider/Carousel lướt ảnh kỷ niệm.
+
+Dưới mỗi bức ảnh là đoạn văn bản chạy ra (Typewriter effect) hoặc hiện lên mượt mà theo từng ảnh.
+
+Yêu cầu thiết kế: Giao diện slider phải bo góc, có hiệu ứng chuyển cảnh mềm mại (Fade hoặc Slide), có nút Next/Prev đồng bộ với phong cách Glassmorphism.
+
+Nhiệm vụ 2: Xây dựng Phần 3 (Lời chúc 8/3)
+
+Thiết kế bố cục Grid Layout (hiển thị nhiều ảnh như một cuốn album) hoặc phong cách Thư (Envelope animation).
+
+Tích hợp logic để hoàn thành Phần 2 -> Bắn hiệu ứng mở khóa Phần 3.
+
+Nhiệm vụ 3: Xây dựng Phần 4 (Mong muốn của em)
+
+Một form Input nhập liệu lãng mạn.
+
+Có nút Submit "Gửi đến anh". Giả lập hiệu ứng Loading -> Thành công -> Bắn pháo hoa (Confetti) chúc mừng hoàn thành toàn bộ Web.
